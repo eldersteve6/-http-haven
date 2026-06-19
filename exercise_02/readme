@@ -1,0 +1,96 @@
+# http-haven
+
+## Exercise 2: Query Parameters & Path Validation
+
+### Overview
+This exercise is a simple Go HTTP server that demonstrates how to:
+- Handle routes using `http.HandleFunc`
+- Read query parameters from a URL
+- Validate HTTP request methods
+- Return dynamic responses based on user input
+
+It builds on the previous exercise by introducing user input handling and request validation.
+
+---
+
+## Features
+
+### 1. `/hello` endpoint
+Handles GET requests and returns a personalized greeting.
+
+#### Example:
+
+GET /hello?name=Alice
+
+
+Response:
+
+Hello, Alice!
+
+
+---
+
+### 2. Default value handling
+If no `name` query parameter is provided:
+
+
+GET /hello
+
+
+Response:
+
+Hello, Guest!
+
+
+---
+
+### 3. HTTP Method validation
+Only `GET` requests are allowed.
+
+If any other method is used (POST, PUT, DELETE, etc.):
+
+Response:
+
+Method not allowed
+
+
+And HTTP status:
+
+405 Method Not Allowed
+
+
+---
+
+## Tech Concepts Used
+
+- Go `net/http` package
+- HTTP routing with `http.HandleFunc`
+- Query parameters using:
+  ```go
+  r.URL.Query().Get("name")
+
+HTTP method checking:
+
+r.Method != http.MethodGet
+Writing responses using fmt.Fprint / fmt.Fprintf
+HTTP status codes
+How to Run
+1. Start the server
+go run main.go
+2. Server runs on:
+http://localhost:8080
+Testing the endpoints
+Valid request with name
+curl "http://localhost:8080/hello?name=Alice"
+Default greeting
+curl "http://localhost:8080/hello"
+Invalid method
+curl -X POST "http://localhost:8080/hello"
+Learning Outcome
+
+After completing this exercise, you should understand:
+
+How HTTP requests carry data through URLs
+How to extract and use query parameters in Go
+How to enforce API rules using HTTP methods
+How backend servers process and respond to client requests

@@ -1,0 +1,205 @@
+# http-haven
+
+## Exercise 3: Text Counter (URL Variables & Methods)
+
+### Overview
+
+This exercise demonstrates how to handle different HTTP methods and process data sent in the request body.
+
+The server exposes a `/count` endpoint that behaves differently depending on the HTTP method used:
+
+* **GET** requests return instructions for using the endpoint.
+* **POST** requests read the request body and return the number of characters contained in the text.
+
+This exercise introduces request body handling and method-based routing behavior in Go.
+
+---
+
+## Learning Objectives
+
+By completing this exercise, you will learn how to:
+
+* Differentiate between HTTP methods using `r.Method`
+* Handle both GET and POST requests on the same route
+* Read request data from the request body
+* Use `io.ReadAll()` to process incoming text
+* Calculate and return the length of a string
+* Return appropriate responses based on request type
+
+---
+
+## Endpoint
+
+### Route
+
+```text
+/count
+```
+
+---
+
+## GET Request
+
+When a client sends a GET request, the server responds with instructions.
+
+### Example
+
+Request:
+
+```bash
+curl http://localhost:8080/count
+```
+
+Response:
+
+```text
+Send a POST request with text to count words
+```
+
+---
+
+## POST Request
+
+When a client sends a POST request, the server reads the text from the request body and returns the total number of characters.
+
+### Example
+
+Request:
+
+```bash
+curl -X POST -d "Hello World" http://localhost:8080/count
+```
+
+Response:
+
+```text
+11
+```
+
+Explanation:
+
+```text
+Hello World
+```
+
+contains 11 characters, including the space.
+
+---
+
+## Methods Used
+
+### Reading the HTTP Method
+
+```go
+r.Method
+```
+
+Used to determine whether the incoming request is GET or POST.
+
+---
+
+### Reading the Request Body
+
+```go
+body, err := io.ReadAll(r.Body)
+```
+
+Reads all data sent in the request body.
+
+---
+
+### Converting Bytes to String
+
+```go
+text := string(body)
+```
+
+Converts the request body into a readable string.
+
+---
+
+### Counting Characters
+
+```go
+len(text)
+```
+
+Returns the total number of characters contained in the text.
+
+---
+
+## How to Run
+
+### Start the Server
+
+```bash
+go run main.go
+```
+
+The server will start on:
+
+```text
+http://localhost:8080
+```
+
+---
+
+## Testing
+
+### Test GET Request
+
+```bash
+curl http://localhost:8080/count
+```
+
+Expected Output:
+
+```text
+Send a POST request with text to count words
+```
+
+---
+
+### Test POST Request
+
+```bash
+curl -X POST -d "Stephen" http://localhost:8080/count
+```
+
+Expected Output:
+
+```text
+7
+```
+
+---
+
+### Another Example
+
+```bash
+curl -X POST -d "Go is fun" http://localhost:8080/count
+```
+
+Expected Output:
+
+```text
+9
+```
+
+---
+
+## Key Concepts Practiced
+
+* HTTP Methods (GET and POST)
+* Request Body Processing
+* Route Handling
+* Input Processing
+* Character Counting
+* Response Generation
+* Error Handling
+
+---
+
+## Conclusion
+
+This exercise extends previous HTTP server concepts by introducing request body handling and method-specific behavior. It demonstrates how servers process incoming data and generate responses based on the type of request received.

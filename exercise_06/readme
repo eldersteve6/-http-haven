@@ -1,0 +1,432 @@
+# http-haven
+
+## Exercise 6: Simple Redirector (Status Codes)
+
+### Overview
+
+This exercise demonstrates how to redirect users from one endpoint to another using HTTP status codes.
+
+The server exposes two routes:
+
+* `/legacy` – the old endpoint
+* `/v2` – the new endpoint
+
+Whenever a client visits `/legacy`, the server permanently redirects the request to `/v2`, where a welcome message is displayed.
+
+This exercise introduces HTTP redirects and the use of status codes to guide client behavior.
+
+---
+
+## Learning Objectives
+
+By completing this exercise, you will learn how to:
+
+* Redirect users between routes
+* Use the `http.Redirect()` helper function
+* Understand HTTP status codes
+* Implement permanent redirects using `301 Moved Permanently`
+* Handle route migration without breaking existing URLs
+
+---
+
+## Routes
+
+### Legacy Route
+
+```text
+/legacy
+```
+
+This endpoint redirects clients to:
+
+```text
+/v2
+```
+
+using:
+
+```go
+http.StatusMovedPermanently
+```
+
+which corresponds to:
+
+```text
+301 Moved Permanently
+```
+
+---
+
+### Version 2 Route
+
+```text
+/v2
+```
+
+This endpoint returns:
+
+```text
+Welcome to version 2
+```
+
+---
+
+## How It Works
+
+### Step 1
+
+Client requests:
+
+```text
+GET /legacy
+```
+
+---
+
+### Step 2
+
+The server responds with:
+
+```text
+301 Moved Permanently
+Location: /v2
+```
+
+---
+
+### Step 3
+
+The client follows the redirect and sends:
+
+```text
+GET /v2
+```
+
+---
+
+### Step 4
+
+The server returns:
+
+```text
+Welcome to version 2
+```
+
+---
+
+## Redirect Implementation
+
+The redirect is performed using:
+
+```go
+http.Redirect(
+    w,
+    r,
+    "/v2",
+    http.StatusMovedPermanently,
+)
+```
+
+Parameters:
+
+* `w` – ResponseWriter
+* `r` – Incoming Request
+* `/v2` – Redirect destination
+* `http.StatusMovedPermanently` – HTTP 301 status code
+
+---
+
+## How to Run
+
+### Start the Server
+
+```bash
+go run main.go
+```
+
+The server will start on:
+
+```text
+http://localhost:8080
+```
+
+---
+
+## Testing
+
+### Browser Test
+
+Visit:
+
+```text
+http://localhost:8080/legacy
+```
+
+Expected behavior:
+
+* Browser automatically redirects to:
+
+```text
+http://localhost:8080/v2
+```
+
+* Displays:
+
+```text
+Welcome to version 2
+```
+
+---
+
+### View Redirect Response
+
+```bash
+curl -i http://localhost:8080/legacy
+```
+
+Example output:
+
+```text
+HTTP/1.1 301 Moved Permanently
+Location: /v2
+```
+
+---
+
+### Follow Redirect Automatically
+
+```bash
+curl -L http://localhost:8080/legacy
+```
+
+Expected output:
+
+```text
+Welcome to version 2
+```
+
+---
+
+## Key Concepts Practiced
+
+* HTTP Routing
+* Redirects
+* Status Codes
+* 301 Moved Permanently
+* Route Migration
+* Client-Server Communication
+
+---
+
+## Real-World Use Cases
+
+Redirects are commonly used for:
+
+* Website redesigns
+* API version upgrades
+* URL restructuring
+* Domain migrations
+* Maintaining backward compatibility
+
+Example:
+
+```text
+/api/v1/users
+```
+
+redirecting to:
+
+```text
+/api/v2/users
+```
+
+without breaking existing clients.
+
+---# http-haven
+
+## Exercise 5: User-Agent Echo (Reading Headers)
+
+### Overview
+
+This exercise demonstrates how to read HTTP request headers in Go.
+
+The server exposes an `/agent` endpoint that reads the `User-Agent` header sent by the client and echoes it back in the response.
+
+If the `User-Agent` header is missing or empty, the server returns a default value indicating that the client is unknown.
+
+---
+
+## Learning Objectives
+
+By completing this exercise, you will learn how to:
+
+* Access HTTP request headers
+* Read specific header values using `r.Header.Get()`
+* Handle missing or empty headers
+* Generate dynamic responses based on client information
+* Understand the purpose of the `User-Agent` header
+
+---
+
+## Endpoint
+
+### Route
+
+```text
+/agent
+```
+
+---
+
+## User-Agent Header
+
+The `User-Agent` header identifies the client making the request.
+
+Examples:
+
+### Browser
+
+```text
+Mozilla/5.0 (X11; Linux x86_64)
+AppleWebKit/537.36
+Chrome/145.0.0.0
+Safari/537.36
+```
+
+### curl
+
+```text
+curl/8.x.x
+```
+
+### Postman
+
+```text
+PostmanRuntime/7.x.x
+```
+
+---
+
+## Response Format
+
+The server responds with:
+
+```text
+You are visiting us using: [User-Agent Info]
+```
+
+Example:
+
+```text
+You are visiting us using: curl/8.x.x
+```
+
+---
+
+## Handling Missing Headers
+
+If the `User-Agent` header is empty or missing:
+
+```text
+You are visiting us using: Unknown Client
+```
+
+---
+
+## How It Works
+
+The header is read using:
+
+```go
+agent := r.Header.Get("User-Agent")
+```
+
+If no value is found:
+
+```go
+if agent == "" {
+    agent = "Unknown Client"
+}
+```
+
+The server then returns the result to the client.
+
+---
+
+## How to Run
+
+### Start the Server
+
+```bash
+go run main.go
+```
+
+The server will start on:
+
+```text
+http://localhost:8080
+```
+
+---
+
+## Testing
+
+### Browser Test
+
+Visit:
+
+```text
+http://localhost:8080/agent
+```
+
+The server will display your browser's User-Agent information.
+
+---
+
+### curl Test
+
+```bash
+curl http://localhost:8080/agent
+```
+
+Example Output:
+
+```text
+You are visiting us using: curl/8.x.x
+```
+
+---
+
+### Empty User-Agent Test
+
+```bash
+curl -H "User-Agent:" http://localhost:8080/agent
+```
+
+Output:
+
+```text
+You are visiting us using: Unknown Client
+```
+
+---
+
+## Key Concepts Practiced
+
+* HTTP Headers
+* Request Inspection
+* Header Retrieval
+* Client Identification
+* Conditional Logic
+* Dynamic Responses
+
+---
+
+## Conclusion
+
+This exercise introduces HTTP request headers and demonstrates how servers can inspect information sent by clients. Understanding headers is essential for authentication, analytics, browser compatibility checks, and many real-world web applications.
+
+
+## Conclusion
+
+This exercise introduces HTTP redirects and demonstrates how servers can instruct clients to request resources from a different location. Understanding redirects and status codes is essential for maintaining and evolving web applications without disrupting users.

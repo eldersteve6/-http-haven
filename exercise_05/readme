@@ -1,0 +1,183 @@
+# http-haven
+
+## Exercise 5: User-Agent Echo (Reading Headers)
+
+### Overview
+
+This exercise demonstrates how to read HTTP request headers in Go.
+
+The server exposes an `/agent` endpoint that reads the `User-Agent` header sent by the client and echoes it back in the response.
+
+If the `User-Agent` header is missing or empty, the server returns a default value indicating that the client is unknown.
+
+---
+
+## Learning Objectives
+
+By completing this exercise, you will learn how to:
+
+* Access HTTP request headers
+* Read specific header values using `r.Header.Get()`
+* Handle missing or empty headers
+* Generate dynamic responses based on client information
+* Understand the purpose of the `User-Agent` header
+
+---
+
+## Endpoint
+
+### Route
+
+```text
+/agent
+```
+
+---
+
+## User-Agent Header
+
+The `User-Agent` header identifies the client making the request.
+
+Examples:
+
+### Browser
+
+```text
+Mozilla/5.0 (X11; Linux x86_64)
+AppleWebKit/537.36
+Chrome/145.0.0.0
+Safari/537.36
+```
+
+### curl
+
+```text
+curl/8.x.x
+```
+
+### Postman
+
+```text
+PostmanRuntime/7.x.x
+```
+
+---
+
+## Response Format
+
+The server responds with:
+
+```text
+You are visiting us using: [User-Agent Info]
+```
+
+Example:
+
+```text
+You are visiting us using: curl/8.x.x
+```
+
+---
+
+## Handling Missing Headers
+
+If the `User-Agent` header is empty or missing:
+
+```text
+You are visiting us using: Unknown Client
+```
+
+---
+
+## How It Works
+
+The header is read using:
+
+```go
+agent := r.Header.Get("User-Agent")
+```
+
+If no value is found:
+
+```go
+if agent == "" {
+    agent = "Unknown Client"
+}
+```
+
+The server then returns the result to the client.
+
+---
+
+## How to Run
+
+### Start the Server
+
+```bash
+go run main.go
+```
+
+The server will start on:
+
+```text
+http://localhost:8080
+```
+
+---
+
+## Testing
+
+### Browser Test
+
+Visit:
+
+```text
+http://localhost:8080/agent
+```
+
+The server will display your browser's User-Agent information.
+
+---
+
+### curl Test
+
+```bash
+curl http://localhost:8080/agent
+```
+
+Example Output:
+
+```text
+You are visiting us using: curl/8.x.x
+```
+
+---
+
+### Empty User-Agent Test
+
+```bash
+curl -H "User-Agent:" http://localhost:8080/agent
+```
+
+Output:
+
+```text
+You are visiting us using: Unknown Client
+```
+
+---
+
+## Key Concepts Practiced
+
+* HTTP Headers
+* Request Inspection
+* Header Retrieval
+* Client Identification
+* Conditional Logic
+* Dynamic Responses
+
+---
+
+## Conclusion
+
+This exercise introduces HTTP request headers and demonstrates how servers can inspect information sent by clients. Understanding headers is essential for authentication, analytics, browser compatibility checks, and many real-world web applications.

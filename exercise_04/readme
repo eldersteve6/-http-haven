@@ -1,0 +1,255 @@
+# http-haven
+
+## Exercise 4: Basic Math API (Multiple Query Parameters)
+
+### Overview
+
+This exercise builds a simple HTTP API that performs basic mathematical operations using query parameters supplied in the URL.
+
+The server exposes a `/calculate` endpoint that accepts:
+
+* `op` – the operation to perform
+* `a` – the first number
+* `b` – the second number
+
+The server supports:
+
+* Addition (`add`)
+* Subtraction (`subtract`)
+* Multiplication (`multiply`)
+
+The result is returned as a plain text response.
+
+---
+
+## Learning Objectives
+
+By completing this exercise, you will learn how to:
+
+* Read multiple query parameters from a URL
+* Convert string values to integers using `strconv.Atoi()`
+* Validate user input
+* Handle conversion errors
+* Return HTTP status codes for invalid requests
+* Perform basic arithmetic operations
+* Use `switch` statements for decision-making
+
+---
+
+## Endpoint
+
+### Route
+
+```text
+/calculate
+```
+
+---
+
+## Query Parameters
+
+| Parameter | Description                                            |
+| --------- | ------------------------------------------------------ |
+| op        | Mathematical operation (`add`, `subtract`, `multiply`) |
+| a         | First integer value                                    |
+| b         | Second integer value                                   |
+
+---
+
+## Supported Operations
+
+### Addition
+
+Request:
+
+```text
+/calculate?op=add&a=10&b=5
+```
+
+Response:
+
+```text
+Result: 15
+```
+
+---
+
+### Subtraction
+
+Request:
+
+```text
+/calculate?op=subtract&a=10&b=5
+```
+
+Response:
+
+```text
+Result: 5
+```
+
+---
+
+### Multiplication
+
+Request:
+
+```text
+/calculate?op=multiply&a=10&b=5
+```
+
+Response:
+
+```text
+Result: 50
+```
+
+---
+
+## Input Processing
+
+The API reads values from the URL using:
+
+```go
+r.URL.Query().Get()
+```
+
+Example:
+
+```go
+op := r.URL.Query().Get("op")
+aStr := r.URL.Query().Get("a")
+bStr := r.URL.Query().Get("b")
+```
+
+Since query parameters are received as strings, they must be converted into integers before mathematical operations can be performed.
+
+Example:
+
+```go
+a, err := strconv.Atoi(aStr)
+b, err := strconv.Atoi(bStr)
+```
+
+---
+
+## Error Handling
+
+### Invalid Number
+
+Request:
+
+```text
+/calculate?op=add&a=ten&b=5
+```
+
+Response:
+
+```text
+Invalid value for a
+```
+
+HTTP Status:
+
+```text
+400 Bad Request
+```
+
+---
+
+### Unknown Operation
+
+Request:
+
+```text
+/calculate?op=divide&a=10&b=5
+```
+
+Response:
+
+```text
+Unknown operation
+```
+
+HTTP Status:
+
+```text
+400 Bad Request
+```
+
+---
+
+## How to Run
+
+### Start the Server
+
+```bash
+go run main.go
+```
+
+The server will start on:
+
+```text
+http://localhost:8080
+```
+
+---
+
+## Testing with curl
+
+### Addition
+
+```bash
+curl "http://localhost:8080/calculate?op=add&a=10&b=5"
+```
+
+---
+
+### Subtraction
+
+```bash
+curl "http://localhost:8080/calculate?op=subtract&a=10&b=5"
+```
+
+---
+
+### Multiplication
+
+```bash
+curl "http://localhost:8080/calculate?op=multiply&a=10&b=5"
+```
+
+---
+
+### Invalid Input
+
+```bash
+curl "http://localhost:8080/calculate?op=add&a=abc&b=5"
+```
+
+---
+
+### Unsupported Operation
+
+```bash
+curl "http://localhost:8080/calculate?op=divide&a=10&b=5"
+```
+
+---
+
+## Key Concepts Practiced
+
+* HTTP Routing
+* Query Parameters
+* Input Validation
+* Integer Conversion
+* Error Handling
+* HTTP Status Codes
+* Arithmetic Operations
+* Switch Statements
+
+---
+
+## Conclusion
+
+This exercise expands on previous HTTP server concepts by introducing multiple query parameters, data conversion, and request validation. It demonstrates how APIs receive, process, validate, and respond to user input while handling errors appropriately.
